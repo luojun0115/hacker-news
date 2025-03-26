@@ -29,7 +29,8 @@ export const summarizePodcastPrompt = `
 
 【输出要求】  
 - 输出纯文本内容，不要使用 Markdown 格式。
-- 固定以以下开场语开始："各位听众：大家好，这里是${podcastTitle}，今天我们"
+- 固定以以下开场语开始："各位听众：大家好，这里是${podcastTitle}，今天我们"。
+- 不要在内容中提及背景音乐相关信息。
 `.trim()
 
 export const summarizeBlogPrompt = `

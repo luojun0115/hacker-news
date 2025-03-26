@@ -26,6 +26,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<CloudflareEnv, Params
 
     const runEnv = this.env.NEXTJS_ENV || 'production'
     const isDev = runEnv === 'development'
+    const breakTime = isDev ? '2 seconds' : '10 seconds'
     const today = event.payload.today || new Date().toISOString().split('T')[0]
     const openai = createOpenAICompatible({
       name: 'openai',
@@ -69,7 +70,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<CloudflareEnv, Params
 
       allStories.push(text)
 
-      await step.sleep('Give AI a break', isDev ? '2 seconds' : '10 seconds')
+      await step.sleep('Give AI a break', breakTime)
     }
 
     const podcastContent = await step.do('create podcast content', retryConfig, async () => {
@@ -88,7 +89,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<CloudflareEnv, Params
 
     console.info('podcast content:\n', isDev ? podcastContent : podcastContent.slice(0, 100))
 
-    await step.sleep('Give AI a break', isDev ? '2 seconds' : '10 seconds')
+    await step.sleep('Give AI a break', breakTime)
 
     const blogContent = await step.do('create blog content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
@@ -106,7 +107,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<CloudflareEnv, Params
 
     console.info('blog content:\n', isDev ? blogContent : blogContent.slice(0, 100))
 
-    await step.sleep('Give AI a break', isDev ? '2 seconds' : '10 seconds')
+    await step.sleep('Give AI a break', breakTime)
 
     const introContent = await step.do('create intro content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
