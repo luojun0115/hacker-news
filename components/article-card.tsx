@@ -56,10 +56,10 @@ export function ArticleCard({ article, staticHost = '', showSummary = false, sho
               <TabsTrigger value="podcast" className="font-bold">播客</TabsTrigger>
               <TabsTrigger value="references" className="font-bold">参考</TabsTrigger>
             </TabsList>
-            <TabsContent value="summary" className="prose prose-sm prose-zinc max-w-none py-4">
+            <TabsContent value="summary" className="prose prose-zinc max-w-none py-4">
               <Markdown>{article.blogContent}</Markdown>
             </TabsContent>
-            <TabsContent value="podcast" className="prose prose-sm prose-zinc max-w-none whitespace-pre-line py-4">
+            <TabsContent value="podcast" className="prose prose-zinc max-w-none whitespace-pre-line py-4">
               {article.podcastContent}
             </TabsContent>
             <TabsContent value="references" className="py-4">
@@ -67,7 +67,7 @@ export function ArticleCard({ article, staticHost = '', showSummary = false, sho
                 <div key={story.id} className="flex items-center gap-2 py-1 group">
                   <Link
                     href={story.url ?? ''}
-                    className="text-sm text-zinc-800 hover:text-zinc-950 transition-colors line-clamp-1 flex-1 font-bold hover:underline"
+                    className="text-base text-zinc-800 hover:text-zinc-950 transition-colors line-clamp-1 flex-1 font-semibold hover:underline"
                     title={story.title}
                     rel="nofollow"
                     target="_blank"
@@ -76,7 +76,7 @@ export function ArticleCard({ article, staticHost = '', showSummary = false, sho
                   </Link>
                   <Link
                     href={`https://news.ycombinator.com/item?id=${story.id}`}
-                    className="text-xs px-2 py-1 rounded-md bg-zinc-100 text-zinc-500 hover:bg-zinc-200 transition-all"
+                    className="text-sm px-2 py-1 rounded-md bg-zinc-100 text-zinc-500 hover:bg-zinc-200 transition-all"
                     title="评论"
                     rel="nofollow"
                     target="_blank"
