@@ -1,0 +1,83 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hacker-news",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-04-12",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "minify": true,
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "triggers": {
+    "crons": [
+      "55 23 * * *"
+    ]
+  },
+  "env": {
+    "nextjs": {
+      "kv_namespaces": [
+        {
+          "binding": "HACKER_NEWS_KV",
+          "id": "4d458dadadea42f8b8198fe3e29f858d"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "HACKER_NEWS_R2",
+          "bucket_name": "hacker-news-r2"
+        }
+      ]
+    }
+  },
+  "workflows": [
+    {
+      "name": "hacker-news",
+      "binding": "HACKER_NEWS_WORKFLOW",
+      "class_name": "HackerNewsWorkflow"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "HACKER_NEWS_KV",
+      "id": "4d458dadadea42f8b8198fe3e29f858d"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "HACKER_NEWS_R2",
+      "bucket_name": "hacker-news-r2"
+    },
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "hacker-news-r2"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_DO_QUEUE",
+        "class_name": "DOQueueHandler"
+      },
+      {
+        "name": "NEXT_TAG_CACHE_DO_SHARDED",
+        "class_name": "DOShardedTagCache"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
+    }
+  ]
+}
