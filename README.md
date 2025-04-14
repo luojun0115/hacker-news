@@ -54,13 +54,15 @@ OPENAI_API_KEY=your_api_key
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_MODEL=gpt-4
 AUDIO_VOICE_ID=zh-CN-XiaoxiaoNeural
+
+# .env.local
+NEXT_DEV_WRANGLER_ENV=preview
 ```
 
 3. 启动开发服务器:
 
 ```bash
 # 开发工作流
-pnpm opennext
 pnpm dev:workflow
 # curl "http://localhost:8787/workflow" # 手动触发工作流
 
@@ -70,9 +72,7 @@ pnpm dev
 
 > 注意：
 >
-> 开发 web 页面时，如果出现 getCloudflareContext 报错，需要先注释掉 wrangler.json 中 workflows 相关配置。本地运行工作流时，则需要恢复该配置
->
-> 本地运行工作流时，edge tts 转换音频可能并不会执行，会卡住，它依赖于 Cloudflare Workers 环境。建议直接注释该部分代码进行 mock 数据
+> - 本地运行工作流时，edge tts 转换音频可能并不会执行，会卡住，它依赖于 Cloudflare Workers 环境。建议直接注释该部分代码进行 mock 数据
 
 ## 部署
 

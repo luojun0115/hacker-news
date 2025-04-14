@@ -24,7 +24,7 @@
     ]
   },
   "env": {
-    "nextjs": {
+    "preview": {
       "kv_namespaces": [
         {
           "binding": "HACKER_NEWS_KV",
