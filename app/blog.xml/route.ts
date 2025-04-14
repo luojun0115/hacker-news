@@ -42,10 +42,15 @@ export async function GET() {
   for (const post of posts) {
     const audioInfo = await env.HACKER_NEWS_R2.head(post.audio)
 
+    const links = post.stories.map(s => `<li><a href="${s.hackerNewsUrl || s.url || ''}">${s.title || ''}</a></li>`).join('')
+    const linkContent = `<p><b>相关链接：</b></p><ul>${links}</ul>`
+    const blogContentHtml = md.render(post.blogContent || '')
+    const finalContent = `<div>${blogContentHtml}<hr/>${linkContent}</div>`
+
     feed.addItem({
       title: post.title || '',
       description: post.introContent || post.podcastContent || '',
-      content: md.render(post.blogContent || ''),
+      content: finalContent,
       url: `https://${host}/post/${post.date}`,
       guid: `https://${host}/post/${post.date}`,
       date: new Date(post.updatedAt || post.date),
