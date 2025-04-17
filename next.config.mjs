@@ -14,6 +14,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  rewrites: () => [
+    {
+      source: '/blog.xml',
+      destination: '/rss.xml',
+    },
+  ],
 }
 
 export default nextConfig

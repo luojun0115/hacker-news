@@ -8,8 +8,6 @@
 
 Podcast 订阅地址: <https://hacker-news.agi.li/rss.xml>
 
-RSS Reader 订阅地址: <https://hacker-news.agi.li/blog.xml>
-
 ## 主要特性
 
 - 🤖 自动抓取 Hacker News 每日热门文章
@@ -26,7 +24,7 @@ RSS Reader 订阅地址: <https://hacker-news.agi.li/blog.xml>
 - Edge TTS 语音合成
 - OpenAI API 内容生成
 - Tailwind CSS 样式处理
-- shadcn UI 组件库
+- shadcn-ui 组件库
 
 ## 工作流程
 
