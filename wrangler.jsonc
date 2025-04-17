@@ -18,34 +18,6 @@
   "observability": {
     "enabled": true
   },
-  "triggers": {
-    "crons": [
-      "55 23 * * *"
-    ]
-  },
-  "env": {
-    "preview": {
-      "kv_namespaces": [
-        {
-          "binding": "HACKER_NEWS_KV",
-          "id": "4d458dadadea42f8b8198fe3e29f858d"
-        }
-      ],
-      "r2_buckets": [
-        {
-          "binding": "HACKER_NEWS_R2",
-          "bucket_name": "hacker-news-r2"
-        }
-      ]
-    }
-  },
-  "workflows": [
-    {
-      "name": "hacker-news",
-      "binding": "HACKER_NEWS_WORKFLOW",
-      "class_name": "HackerNewsWorkflow"
-    }
-  ],
   "kv_namespaces": [
     {
       "binding": "HACKER_NEWS_KV",

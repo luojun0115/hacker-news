@@ -47,16 +47,15 @@ pnpm install
 2. 配置环境变量:
 
 ```bash
-# .dev.vars
+#.dev.vars
 NEXTJS_ENV=development
 NEXT_STATIC_HOST=http://localhost:3000/static
+
+# worker/.dev.vars
 OPENAI_API_KEY=your_api_key
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_MODEL=gpt-4
-AUDIO_VOICE_ID=zh-CN-XiaoxiaoNeural
 
-# .env.local
-NEXT_DEV_WRANGLER_ENV=preview
 ```
 
 3. 启动开发服务器:

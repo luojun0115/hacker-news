@@ -1,14 +1,30 @@
 import type { WorkflowEvent, WorkflowStep, WorkflowStepConfig } from 'cloudflare:workers'
 import { podcastTitle } from '@/config'
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
+import { createOpenAI } from '@ai-sdk/openai'
 import { synthesize } from '@echristian/edge-tts'
 import { generateText } from 'ai'
 import { WorkflowEntrypoint } from 'cloudflare:workers'
 import { introPrompt, summarizeBlogPrompt, summarizePodcastPrompt, summarizeStoryPrompt } from './prompt'
-import { getHackerNewsStory, getHackerNewsTopStories } from './utils'
+import { concatAudioFiles, getHackerNewsStory, getHackerNewsTopStories } from './utils'
 
 interface Params {
   today?: string
+}
+
+interface Env extends CloudflareEnv {
+  OPENAI_BASE_URL: string
+  OPENAI_API_KEY: string
+  OPENAI_MODEL: string
+  OPENAI_MAX_TOKENS: string
+  JINA_KEY: string
+  MAN_VOICE_ID: string
+  WOMAN_VOICE_ID: string
+  AUDIO_SPEED: string
+  WORKER_ENV: string
+  HACKER_NEWS_WORKER_URL: string
+  HACKER_NEWS_R2_BUCKET_URL: string
+  HACKER_NEWS_WORKFLOW: Workflow
+  BROWSER: Fetcher
 }
 
 const retryConfig: WorkflowStepConfig = {
@@ -20,15 +36,15 @@ const retryConfig: WorkflowStepConfig = {
   timeout: '3 minutes',
 }
 
-export class HackerNewsWorkflow extends WorkflowEntrypoint<CloudflareEnv, Params> {
+export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
   async run(event: WorkflowEvent<Params>, step: WorkflowStep) {
     console.info('trigged event: HackerNewsWorkflow', event)
 
-    const runEnv = this.env.NEXTJS_ENV || 'production'
-    const isDev = runEnv === 'development'
+    const runEnv = this.env.WORKER_ENV || 'production'
+    const isDev = runEnv !== 'production'
     const breakTime = isDev ? '2 seconds' : '10 seconds'
     const today = event.payload.today || new Date().toISOString().split('T')[0]
-    const openai = createOpenAICompatible({
+    const openai = createOpenAI({
       name: 'openai',
       baseURL: this.env.OPENAI_BASE_URL!,
       headers: {
@@ -45,11 +61,10 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<CloudflareEnv, Params
       throw new Error('no stories found')
     }
 
-    stories.length = Math.min(stories.length, isDev ? 10 : 10)
+    stories.length = Math.min(stories.length, isDev ? 3 : 10)
     console.info('top stories', isDev ? stories : JSON.stringify(stories))
 
     const allStories: string[] = []
-
     for (const story of stories) {
       const storyResponse = await step.do(`get story ${story.id}: ${story.title}`, retryConfig, async () => {
         return await getHackerNewsStory(story, maxTokens, this.env.JINA_KEY)
@@ -122,26 +137,56 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<CloudflareEnv, Params
       return text
     })
 
-    const contentKey = `content:${runEnv}:hacker-news:${today}`
-    const podcastKey = `${today.replaceAll('-', '/')}/${runEnv}/hacker-news-${today}.mp3`
+    const contentKey = `debug:content:${runEnv}:hacker-news:${today}` // FIXME: 去除 debug
+    const podcastKey = `debug/${today.replaceAll('-', '/')}/${runEnv}/hacker-news-${today}.mp3` // FIXME: 去除 debug
 
-    await step.do('create podcast audio', { ...retryConfig, timeout: '5 minutes' }, async () => {
-      const { audio } = await synthesize({
-        text: podcastContent,
-        language: 'zh-CN',
-        voice: this.env.AUDIO_VOICE_ID || 'zh-CN-XiaoxiaoNeural',
-        rate: this.env.AUDIO_SPEED || '10%',
+    const conversations = podcastContent.split('\n').filter(Boolean)
+
+    const audioFiles: string[] = []
+    for (const [index, conversation] of conversations.entries()) {
+      await step.do('create podcast audio', { ...retryConfig, timeout: '5 minutes' }, async () => {
+        if (
+          !(conversation.startsWith('男') || conversation.startsWith('女'))
+          || !conversation.substring(2).trim()
+        ) {
+          console.warn('conversation is not valid', conversation)
+          return conversation
+        }
+
+        console.info('create conversation audio', conversation)
+        const { audio } = await synthesize({
+          text: conversation.substring(2),
+          language: 'zh-CN',
+          voice: conversation.startsWith('男') ? (this.env.MAN_VOICE_ID || 'zh-CN-YunyangNeural') : (this.env.WOMAN_VOICE_ID || 'zh-CN-XiaoxiaoNeural'),
+          rate: this.env.AUDIO_SPEED || '10%',
+        })
+
+        if (!audio.size) {
+          throw new Error('podcast audio size is 0')
+        }
+
+        await this.env.HACKER_NEWS_R2.put(`${podcastKey}-${index}.mp3`, audio)
+
+        const audioFile = `${this.env.HACKER_NEWS_R2_BUCKET_URL}/${podcastKey}-${index}.mp3?t=${Date.now()}`
+        audioFiles.push(audioFile)
+        return audioFile
       })
+    }
 
-      await this.env.HACKER_NEWS_R2.put(podcastKey, audio)
-
-      const podcast = await this.env.HACKER_NEWS_R2.head(podcastKey)
-
-      if (!podcast || !podcast.size || podcast.size < audio.size) {
-        throw new Error('podcast not found')
+    await step.do('concat audio files', retryConfig, async () => {
+      if (!this.env.BROWSER) {
+        console.warn('browser is not configured, skip concat audio files')
+        return
       }
 
-      return 'OK'
+      const blob = await concatAudioFiles(audioFiles, this.env.BROWSER, { workerUrl: this.env.HACKER_NEWS_WORKER_URL })
+      await this.env.HACKER_NEWS_R2.put(podcastKey, blob)
+
+      for (const index of audioFiles.keys()) {
+        await this.env.HACKER_NEWS_R2.delete(`${podcastKey}-${index}.mp3`)
+      }
+
+      return `${this.env.HACKER_NEWS_R2_BUCKET_URL}/${podcastKey}?t=${Date.now()}`
     })
 
     console.info('save podcast to r2 success')
@@ -158,7 +203,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<CloudflareEnv, Params
         updatedAt: Date.now(),
       }))
 
-      return 'OK'
+      return introContent
     })
 
     console.info('save content to kv success')
