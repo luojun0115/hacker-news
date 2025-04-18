@@ -1,9 +1,12 @@
-interface Env {
+export * from '../workflow'
+
+interface Env extends CloudflareEnv {
   HACKER_NEWS_WORKFLOW: Workflow
+  BROWSER: Fetcher
 }
 
 export default {
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+  runWorkflow(event: ScheduledEvent | Request, env: Env, ctx: ExecutionContext) {
     console.info('trigger event by:', event)
 
     const createWorkflow = async () => {
@@ -21,5 +24,15 @@ export default {
     ctx.waitUntil(createWorkflow())
 
     return new Response('create workflow success')
+  },
+  fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    if (!env.BROWSER && request.method === 'POST') {
+      // curl -X POST http://localhost:8787
+      return this.runWorkflow(request, env, ctx)
+    }
+    return Response.redirect('https://hacker-news.agi.li/')
+  },
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+    return this.runWorkflow(event, env, ctx)
   },
 }

@@ -1,9 +1,12 @@
 import { keepDays, podcastDescription, podcastTitle } from '@/config'
 import { getPastDays } from '@/lib/utils'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
+import markdownit from 'markdown-it'
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { Podcast } from 'podcast'
+
+const md = markdownit()
 
 export const revalidate = 300
 
@@ -40,12 +43,13 @@ export async function GET() {
 
     const links = post.stories.map(s => `<li><a href="${s.hackerNewsUrl || s.url || ''}">${s.title || ''}</a></li>`).join('')
     const linkContent = `<p><b>相关链接：</b></p><ul>${links}</ul>`
-    const content = `<div style="word-break: break-all;white-space: pre-line;">${post.podcastContent || ''}<hr/>${linkContent}</div>`
+    const blogContentHtml = md.render(post.blogContent || '')
+    const finalContent = `<div>${blogContentHtml}<hr/>${linkContent}</div>`
 
     feed.addItem({
       title: post.title || '',
       description: post.introContent || post.podcastContent || '',
-      content,
+      content: finalContent,
       url: `https://${host}/post/${post.date}`,
       guid: `https://${host}/post/${post.date}`,
       date: new Date(post.updatedAt || post.date),
