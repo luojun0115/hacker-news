@@ -137,8 +137,8 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
       return text
     })
 
-    const contentKey = `debug:content:${runEnv}:hacker-news:${today}` // FIXME: 去除 debug
-    const podcastKey = `debug/${today.replaceAll('-', '/')}/${runEnv}/hacker-news-${today}.mp3` // FIXME: 去除 debug
+    const contentKey = `content:${runEnv}:hacker-news:${today}` // FIXME: 去除 debug
+    const podcastKey = `${today.replaceAll('-', '/')}/${runEnv}/hacker-news-${today}.mp3` // FIXME: 去除 debug
 
     const conversations = podcastContent.split('\n').filter(Boolean)
 
