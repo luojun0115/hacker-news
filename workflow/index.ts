@@ -1,10 +1,10 @@
 import type { WorkflowEvent, WorkflowStep, WorkflowStepConfig } from 'cloudflare:workers'
 import { podcastTitle } from '@/config'
 import { createOpenAI } from '@ai-sdk/openai'
-import { synthesize } from '@echristian/edge-tts'
 import { generateText } from 'ai'
 import { WorkflowEntrypoint } from 'cloudflare:workers'
 import { introPrompt, summarizeBlogPrompt, summarizePodcastPrompt, summarizeStoryPrompt } from './prompt'
+import synthesize from './tts'
 import { concatAudioFiles, getHackerNewsStory, getHackerNewsTopStories } from './utils'
 
 interface Params {
@@ -18,9 +18,6 @@ interface Env extends CloudflareEnv {
   OPENAI_THINKING_MODEL?: string
   OPENAI_MAX_TOKENS?: string
   JINA_KEY?: string
-  MAN_VOICE_ID?: string
-  WOMAN_VOICE_ID?: string
-  AUDIO_SPEED?: string
   WORKER_ENV?: string
   HACKER_NEWS_WORKER_URL: string
   HACKER_NEWS_R2_BUCKET_URL: string
@@ -44,7 +41,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
     const runEnv = this.env.WORKER_ENV || 'production'
     const isDev = runEnv !== 'production'
     const breakTime = isDev ? '2 seconds' : '10 seconds'
-    const today = event.payload.today || new Date().toISOString().split('T')[0]
+    const today = event.payload?.today || new Date().toISOString().split('T')[0]
     const openai = createOpenAI({
       name: 'openai',
       baseURL: this.env.OPENAI_BASE_URL!,
@@ -138,8 +135,8 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
       return text
     })
 
-    const contentKey = `content:${runEnv}:hacker-news:${today}` // FIXME: 去除 debug
-    const podcastKey = `${today.replaceAll('-', '/')}/${runEnv}/hacker-news-${today}.mp3` // FIXME: 去除 debug
+    const contentKey = `content:${runEnv}:hacker-news:${today}`
+    const podcastKey = `${today.replaceAll('-', '/')}/${runEnv}/hacker-news-${today}.mp3`
 
     const conversations = podcastContent.split('\n').filter(Boolean)
 
@@ -155,12 +152,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
         }
 
         console.info('create conversation audio', conversation)
-        const { audio } = await synthesize({
-          text: conversation.substring(2),
-          language: 'zh-CN',
-          voice: conversation.startsWith('男') ? (this.env.MAN_VOICE_ID || 'zh-CN-YunyangNeural') : (this.env.WOMAN_VOICE_ID || 'zh-CN-XiaoxiaoNeural'),
-          rate: this.env.AUDIO_SPEED || '10%',
-        })
+        const audio = await synthesize(conversation.substring(2), conversation[0], this.env)
 
         if (!audio.size) {
           throw new Error('podcast audio size is 0')
