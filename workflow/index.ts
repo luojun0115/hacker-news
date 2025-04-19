@@ -106,7 +106,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const blogContent = await step.do('create blog content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
+        model: openai(this.env.OPENAI_MODEL!),
         system: summarizeBlogPrompt,
         prompt: allStories.join('\n\n---\n\n'),
         maxTokens,
