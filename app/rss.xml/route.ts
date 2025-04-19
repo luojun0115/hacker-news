@@ -1,4 +1,4 @@
-import { keepDays, podcastDescription, podcastTitle } from '@/config'
+import { podcastDescription, podcastTitle } from '@/config'
 import { getPastDays } from '@/lib/utils'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import markdownit from 'markdown-it'
@@ -30,7 +30,7 @@ export async function GET() {
 
   const { env } = getCloudflareContext()
   const runEnv = env.NEXTJS_ENV
-  const pastDays = getPastDays(keepDays)
+  const pastDays = getPastDays(10)
   const posts = (await Promise.all(
     pastDays.map(async (day) => {
       const post = await env.HACKER_NEWS_KV.get(`content:${runEnv}:hacker-news:${day}`, 'json')
