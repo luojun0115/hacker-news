@@ -15,12 +15,13 @@ interface Env extends CloudflareEnv {
   OPENAI_BASE_URL: string
   OPENAI_API_KEY: string
   OPENAI_MODEL: string
-  OPENAI_MAX_TOKENS: string
-  JINA_KEY: string
-  MAN_VOICE_ID: string
-  WOMAN_VOICE_ID: string
-  AUDIO_SPEED: string
-  WORKER_ENV: string
+  OPENAI_THINKING_MODEL?: string
+  OPENAI_MAX_TOKENS?: string
+  JINA_KEY?: string
+  MAN_VOICE_ID?: string
+  WOMAN_VOICE_ID?: string
+  AUDIO_SPEED?: string
+  WORKER_ENV?: string
   HACKER_NEWS_WORKER_URL: string
   HACKER_NEWS_R2_BUCKET_URL: string
   HACKER_NEWS_WORKFLOW: Workflow
@@ -90,7 +91,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const podcastContent = await step.do('create podcast content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai(this.env.OPENAI_MODEL!),
+        model: openai(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizePodcastPrompt,
         prompt: allStories.join('\n\n---\n\n'),
         maxTokens,
@@ -108,7 +109,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const blogContent = await step.do('create blog content', retryConfig, async () => {
       const { text, usage, finishReason } = await generateText({
-        model: openai(this.env.OPENAI_MODEL!),
+        model: openai(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizeBlogPrompt,
         prompt: allStories.join('\n\n---\n\n'),
         maxTokens,
