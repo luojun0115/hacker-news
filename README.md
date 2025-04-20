@@ -2,11 +2,13 @@
 
 一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容。
 
----
-
 预览地址: <https://hacker-news.agi.li>
 
 订阅地址: <https://hacker-news.agi.li/rss.xml>
+
+![hacker-news](https://socialify.git.ci/ccbikai/hacker-news/image?description=1&forks=1&name=1&owner=1&pattern=Circuit+Board&stargazers=1&theme=Auto)
+
+---
 
 ## 主要特性
 
