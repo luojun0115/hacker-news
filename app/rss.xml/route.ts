@@ -26,6 +26,7 @@ export async function GET() {
     generator: podcastTitle,
     author: podcastTitle,
     categories: ['technology', 'news'],
+    itunesCategory: [{ text: 'Technology' }, { text: 'News' }],
   })
 
   const { env } = getCloudflareContext()
