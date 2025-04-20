@@ -3,6 +3,7 @@ import { synthesize } from '@echristian/edge-tts'
 
 interface Env extends CloudflareEnv {
   TTS_PROVIDER?: string
+  TTS_API_URL?: string
   TTS_API_ID?: string
   TTS_API_KEY?: string
   MAN_VOICE_ID?: string
@@ -21,7 +22,7 @@ async function edgeTTS(text: string, gender: string, env: Env) {
 }
 
 async function minimaxTTS(text: string, gender: string, env: Env) {
-  const res = await fetch(`https://api.minimax.chat/v1/t2a_v2?GroupId=${env.TTS_API_ID}`, {
+  const res = await fetch(`${env.TTS_API_URL || 'https://api.minimax.chat/v1/t2a_v2'}?GroupId=${env.TTS_API_ID}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,15 +33,16 @@ async function minimaxTTS(text: string, gender: string, env: Env) {
       text,
       timber_weights: [
         {
-          voice_id: gender === '男' ? (env.MAN_VOICE_ID || 'Boyan_new_platform') : (env.WOMAN_VOICE_ID || 'Chinese (Mandarin)_Warm_Bestie'),
+          voice_id: gender === '男' ? (env.MAN_VOICE_ID || 'Chinese (Mandarin)_Radio_Host') : (env.WOMAN_VOICE_ID || 'Chinese (Mandarin)_Warm_Bestie'),
           weight: 100,
         },
       ],
       voice_setting: {
         voice_id: '',
-        speed: Number(env.AUDIO_SPEED || 1),
+        speed: Number(env.AUDIO_SPEED || 1.1),
         pitch: 0,
         vol: 1,
+        emotion: 'happy',
         latex_read: false,
       },
       audio_setting: {
