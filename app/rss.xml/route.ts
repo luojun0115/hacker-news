@@ -26,6 +26,7 @@ export async function GET() {
     generator: podcastTitle,
     author: podcastTitle,
     categories: ['technology', 'news'],
+    itunesImage: `https://${host}/logo.jpg`,
     itunesCategory: [{ text: 'Technology' }, { text: 'News' }],
   })
 
