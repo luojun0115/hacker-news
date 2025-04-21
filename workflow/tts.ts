@@ -33,7 +33,7 @@ async function minimaxTTS(text: string, gender: string, env: Env) {
       text,
       timber_weights: [
         {
-          voice_id: gender === '男' ? (env.MAN_VOICE_ID || 'Chinese (Mandarin)_Radio_Host') : (env.WOMAN_VOICE_ID || 'Chinese (Mandarin)_Warm_Bestie'),
+          voice_id: gender === '男' ? (env.MAN_VOICE_ID || 'Chinese (Mandarin)_Stubborn_Friend') : (env.WOMAN_VOICE_ID || 'Chinese (Mandarin)_Warm_Bestie'),
           weight: 100,
         },
       ],
@@ -42,7 +42,6 @@ async function minimaxTTS(text: string, gender: string, env: Env) {
         speed: Number(env.AUDIO_SPEED || 1.1),
         pitch: 0,
         vol: 1,
-        emotion: 'happy',
         latex_read: false,
       },
       audio_setting: {
