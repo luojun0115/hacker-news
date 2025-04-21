@@ -32,7 +32,7 @@
 
 1. 定时抓取 Hacker News 热门文章
 2. 使用 AI 生成中文摘要和播报文稿
-3. 通过 Edge TTS 转换为音频
+3. 通过 TTS 转换为音频, 感谢 [Minimax Audio](https://hailuoai.com/audio) 赞助 TTS 服务。
 4. 存储到 Cloudflare R2 和 KV
 5. 通过 RSS feed 和网页提供访问
 
@@ -112,6 +112,8 @@ pnpm deploy
 欢迎提交 Issue 和 Pull Request!
 
 ## 赞助
+
+- **[海螺语音](https://hailuoai.com/audio)**：让文字栩栩如“声”
 
 1. [在 Telegram 关注我](https://t.me/miantiao_me)
 2. [在 𝕏 上关注我](https://404.li/x)
