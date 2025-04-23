@@ -55,7 +55,7 @@ NEXTJS_ENV=development
 NEXT_STATIC_HOST=http://localhost:3000/static
 
 # worker/.dev.vars
-WORKER_ENV=dev
+WORKER_ENV=development
 HACKER_NEWS_WORKER_URL=https://you-worker-url
 HACKER_NEWS_R2_BUCKET_URL=https://your-bucket-url
 OPENAI_API_KEY=your_api_key
