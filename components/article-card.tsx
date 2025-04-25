@@ -54,7 +54,7 @@ export function ArticleCard({ article, staticHost = '', showSummary = false, sho
             语音使用
             {/* eslint-disable-next-line react-dom/no-unsafe-target-blank */}
             <a href="https://hailuoai.com/audio" target="_blank" className="text-zinc-800 hover:text-zinc-950 transition-colors"> 海螺语音 </a>
-            生成。 海螺语音：让文字栩栩如“声”。
+            生成。 Minimax Audio：让文字栩栩如“声”。
           </div>
           <Tabs defaultValue="summary" className="w-full">
             <TabsList>

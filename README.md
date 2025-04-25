@@ -113,7 +113,7 @@ pnpm deploy
 
 ## 赞助
 
-- **[海螺语音](https://hailuoai.com/audio)**：让文字栩栩如“声”
+- **[Minimax Audio](https://hailuoai.com/audio)**：让文字栩栩如“声”
 
 1. [在 Telegram 关注我](https://t.me/miantiao_me)
 2. [在 𝕏 上关注我](https://404.li/x)
