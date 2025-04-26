@@ -53,7 +53,7 @@ export function ArticleCard({ article, staticHost = '', showSummary = false, sho
           <div className="text-sm text-zinc-500 mb-4 w-full">
             语音使用
             {/* eslint-disable-next-line react-dom/no-unsafe-target-blank */}
-            <a href="https://hailuoai.com/audio" target="_blank" className="text-zinc-800 hover:text-zinc-950 transition-colors"> 海螺语音 </a>
+            <a href="https://hailuoai.com/audio" target="_blank" className="text-zinc-800 hover:text-zinc-950 transition-colors"> Minimax Audio </a>
             生成。 Minimax Audio：让文字栩栩如“声”。
           </div>
           <Tabs defaultValue="summary" className="w-full">
