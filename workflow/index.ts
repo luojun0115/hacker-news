@@ -175,19 +175,22 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
       const blob = await concatAudioFiles(audioFiles, this.env.BROWSER, { workerUrl: this.env.HACKER_NEWS_WORKER_URL })
       await this.env.HACKER_NEWS_R2.put(podcastKey, blob)
 
+      return `${this.env.HACKER_NEWS_R2_BUCKET_URL}/${podcastKey}?t=${Date.now()}`
+    })
+
+    console.info('save podcast to r2 success')
+
+    await step.do('delete temp files', retryConfig, async () => {
       try {
         for (const index of audioFiles.keys()) {
           await this.env.HACKER_NEWS_R2.delete(`${podcastKey}-${index}.mp3`)
         }
       }
       catch (error) {
-        console.error('delete audio files failed', error)
+        console.error('delete temp files failed', error)
       }
-
-      return `${this.env.HACKER_NEWS_R2_BUCKET_URL}/${podcastKey}?t=${Date.now()}`
+      return 'delete temp files success'
     })
-
-    console.info('save podcast to r2 success')
 
     await step.do('save content to kv', retryConfig, async () => {
       await this.env.HACKER_NEWS_KV.put(contentKey, JSON.stringify({

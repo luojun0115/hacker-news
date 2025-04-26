@@ -51,6 +51,7 @@ export const summarizeBlogPrompt = `
 - 使用优雅的简体中文撰写，专业术语可保留英文。
 - 直接返回 Markdown 格式的正文内容，不要使用 \`\`\`markdown 包裹正文内容。
 - 不要返回前言，直接返回正文内容。
+- 开场白使用一句话介绍博客内容。
 `.trim()
 
 export const introPrompt = `
