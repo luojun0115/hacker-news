@@ -10,7 +10,23 @@ const md = markdownit()
 
 export const revalidate = 300
 
-export async function GET() {
+export async function GET(request: Request) {
+  // 创建缓存键
+  const cacheUrl = new URL(request.url)
+  const cacheKey = new Request(cacheUrl.toString())
+  const cache = typeof caches !== 'undefined' ? await caches.open('rss-feed-cache') : undefined
+
+  if (cache) {
+    const response = await cache.match(cacheKey)
+
+    if (response) {
+      // 如果有缓存，直接返回缓存的响应
+      console.info('Returning cached RSS feed response')
+      return response
+    }
+  }
+
+  // 如果没有缓存，生成新的响应
   const headersList = await headers()
   const host = headersList.get('host')
 
@@ -63,10 +79,20 @@ export async function GET() {
     })
   }
 
-  return new NextResponse(feed.buildXml(), {
+  const response = new NextResponse(feed.buildXml(), {
     headers: {
       'Content-Type': 'application/xml',
       'Cache-Control': `public, max-age=${revalidate}, s-maxage=${revalidate}`,
     },
   })
+
+  if (cache) {
+    const responseToCache = response.clone()
+
+    await cache.put(cacheKey, responseToCache).catch((error) => {
+      console.error('Failed to cache RSS feed:', error)
+    })
+  }
+
+  return response
 }
