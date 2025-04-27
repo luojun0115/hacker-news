@@ -40,7 +40,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     const runEnv = this.env.WORKER_ENV || 'production'
     const isDev = runEnv !== 'production'
-    const breakTime = isDev ? '2 seconds' : '10 seconds'
+    const breakTime = isDev ? '2 seconds' : '5 seconds'
     const today = event.payload?.today || new Date().toISOString().split('T')[0]
     const openai = createOpenAI({
       name: 'openai',
@@ -181,13 +181,13 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
     console.info('save podcast to r2 success')
 
     await step.do('delete temp files', retryConfig, async () => {
-      try {
-        for (const index of audioFiles.keys()) {
+      for (const index of audioFiles.keys()) {
+        try {
           await this.env.HACKER_NEWS_R2.delete(`${podcastKey}-${index}.mp3`)
         }
-      }
-      catch (error) {
-        console.error('delete temp files failed', error)
+        catch (error) {
+          console.error('delete temp files failed', error)
+        }
       }
       return 'delete temp files success'
     })
