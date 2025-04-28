@@ -2,6 +2,8 @@
 
 一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容。
 
+[<img src="https://devin.ai/assets/deepwiki-badge.png" alt="DeepWiki" height="20"/>](https://deepwiki.com/ccbikai/hacker-news)
+
 预览地址: <https://hacker-news.agi.li>
 
 订阅地址: <https://hacker-news.agi.li/rss.xml>
