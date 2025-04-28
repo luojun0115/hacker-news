@@ -81,7 +81,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
         return text
       })
 
-      allStories.push(text)
+      allStories.push(`<story>${text}</story>`)
 
       await step.sleep('Give AI a break', breakTime)
     }
