@@ -41,7 +41,7 @@
   "r2_buckets": [
     {
       "binding": "HACKER_NEWS_R2",
-      "bucket_name": "hacker-news-r2"
+      "bucket_name": "hacker-news"
     }
   ]
 }

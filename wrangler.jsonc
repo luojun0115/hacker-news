@@ -27,11 +27,11 @@
   "r2_buckets": [
     {
       "binding": "HACKER_NEWS_R2",
-      "bucket_name": "hacker-news-r2"
+      "bucket_name": "hacker-news"
     },
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "hacker-news-r2"
+      "bucket_name": "hacker-news"
     }
   ],
   "durable_objects": {
