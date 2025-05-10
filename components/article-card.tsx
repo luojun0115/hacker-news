@@ -2,12 +2,10 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import AudioPlayer from 'player.style/tailwind-audio/react'
 import { Suspense } from 'react'
 import Markdown from 'react-markdown'
-
-const AudioPlayer = dynamic(() => import('player.style/tailwind-audio/react'), { ssr: false })
 
 interface ArticleCardProps {
   article: Article

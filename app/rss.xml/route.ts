@@ -35,14 +35,14 @@ export async function GET(request: Request) {
     description: podcastDescription,
     feedUrl: `https://${host}/rss.xml`,
     siteUrl: `https://${host}`,
-    imageUrl: `https://${host}/logo.jpg`,
+    imageUrl: `https://${host}/logo.png`,
     language: 'zh-CN',
     pubDate: new Date(),
     ttl: 60,
     generator: podcastTitle,
     author: podcastTitle,
     categories: ['technology', 'news'],
-    itunesImage: `https://${host}/logo.jpg`,
+    itunesImage: `https://${host}/logo.png`,
     itunesCategory: [{ text: 'Technology' }, { text: 'News' }],
   })
 

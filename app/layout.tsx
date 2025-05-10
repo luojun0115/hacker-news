@@ -1,22 +1,40 @@
 import type { Metadata } from 'next'
 import { podcastDescription, podcastTitle } from '@/config'
 import { Github, Rss } from 'lucide-react'
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: podcastTitle,
-  description: podcastDescription,
-  alternates: {
-    types: {
-      'application/rss+xml': [
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers()
+  const host = headersList.get('host')
+
+  return {
+    title: podcastTitle,
+    description: podcastDescription,
+    alternates: {
+      types: {
+        'application/rss+xml': [
+          {
+            url: '/rss.xml',
+            title: podcastTitle,
+          },
+        ],
+      },
+    },
+    openGraph: {
+      title: podcastTitle,
+      description: podcastDescription,
+      images: [
         {
-          url: '/rss.xml',
-          title: podcastTitle,
+          url: `https://${host}/banner.png`,
         },
       ],
     },
-  },
+    twitter: {
+      card: 'summary_large_image',
+    },
+  }
 }
 
 export default function RootLayout({
