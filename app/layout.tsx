@@ -25,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: podcastTitle,
       description: podcastDescription,
+      type: 'website',
       images: [
         {
           url: `https://${host}/banner.png`,
