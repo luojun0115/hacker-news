@@ -110,7 +110,7 @@ export class HackerNewsWorkflow extends WorkflowEntrypoint<Env, Params> {
       const { text, usage, finishReason } = await generateText({
         model: openai(this.env.OPENAI_THINKING_MODEL || this.env.OPENAI_MODEL!),
         system: summarizeBlogPrompt,
-        prompt: allStories.join('\n\n---\n\n'),
+        prompt: `<stories>${JSON.stringify(stories)}</stories>\n\n---\n\n${allStories.join('\n\n---\n\n')}`,
         maxTokens,
         maxRetries: 3,
       })

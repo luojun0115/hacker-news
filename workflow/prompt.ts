@@ -36,7 +36,7 @@ export const summarizePodcastPrompt = `
 
 示例输出格式：
 
-女：各位听众：大家好，这里是${podcastTitle}
+女：各位听众：大家好，这里是 ${podcastTitle}
 男：今天我们来聊一聊....
 `.trim()
 
@@ -55,6 +55,7 @@ export const summarizeBlogPrompt = `
 - 直接返回 Markdown 格式的正文内容，不要使用 \`\`\`markdown 包裹正文内容。
 - 不要返回前言，直接返回正文内容。
 - 文章结构清晰，使用二级标题、三级标题 (如“## 标题”、“### 子标题”) 与分段正文形式呈现博客的核心精简内容。
+- 使用 <stories> 中的信息为二级标题增加超链接(使用 hackerNewsUrl 字段的值)。
 `.trim()
 
 export const introPrompt = `
