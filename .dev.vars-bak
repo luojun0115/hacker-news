@@ -1,0 +1,5 @@
+# hacker-news\.dev.vars
+NEXTJS_ENV=development
+NEXT_STATIC_HOST=http://localhost:3000/static
+
+ssh-keygen -t ed25519 -C "luojun0115@126.com"
